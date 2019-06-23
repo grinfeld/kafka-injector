@@ -16,7 +16,7 @@
         <generex.version>1.0.2</generex.version>
         <reactor.core.version>3.1.8.RELEASE</reactor.core.version>
         <reactor.test.version>3.0.7.RELEASE</reactor.test.version>
-        <jackson.version>2.9.6</jackson.version>
+        <jackson.version>2.9.9</jackson.version>
         <spring.version>5.0.9.RELEASE</spring.version>
         <kafka.version>2.1.0</kafka.version>
         <maven.assembly.plugin.version>3.1.0</maven.assembly.plugin.version>
