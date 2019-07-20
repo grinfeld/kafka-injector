@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/grinfeld/kafka-injector.svg?branch=master)](https://travis-ci.org/grinfeld/kafka-injector)
+
 # Kafka Injector
 
 This package generates values and put them into Kafka according to configuration based on Yaml format.
