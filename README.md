@@ -129,7 +129,7 @@ Main element is **kafka**. It has few nested elements, as follows:
         1. **key** - fully qualified class name for Kafka key serializer - _required_
         1. **value** - fully qualified class name for Kafka value serializer - _required_
     1. **generators** - list of generators per topic
-        1. **type** - fully qualified class name for Generator (String) (should be existed. See [generated package](src/main/java/com/mikerusoft/kafka/injector/core/generate/model/) and should implement [DataGenerator](src/main/java/com/mikerusoft/kafka/injector/core/generate/model/DataGenerator.java)) (String) _required_
+        1. **type** - fully qualified class name for Generator (String) (should be existed. See [generated package](core/src/main/java/com/mikerusoft/kafka/injector/core/generate/model/) and should implement [DataGenerator](core/src/main/java/com/mikerusoft/kafka/injector/core/generate/model/DataGenerator.java)) (String) _required_
         1. **fields** - list of fields to generate
             1. **name** - field name to generate. Actually, it should be name of setter (or adder) in class you generate (method returned ``void`` and **only one** method argument). (String) _required_
             1. **type** - type of value generator (String) _required_. There few different types (from enum [GeneratorType](src/main/java/com/mikerusoft/kafka/injector/core/properties/GeneratorType.java))
