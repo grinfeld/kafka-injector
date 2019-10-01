@@ -1,4 +1,6 @@
 [![Build Status](https://travis-ci.org/grinfeld/kafka-injector.svg?branch=master)](https://travis-ci.org/grinfeld/kafka-injector)
+[![Code Quality: Java](https://img.shields.io/lgtm/grade/java/g/grinfeld/redirect-to-stream.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/grinfeld/redirect-to-stream/context:java)
+[![Total Alerts](https://img.shields.io/lgtm/alerts/g/grinfeld/redirect-to-stream.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/grinfeld/redirect-to-stream/alerts)
 
 # Kafka Injector
 
