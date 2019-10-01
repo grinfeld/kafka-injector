@@ -16,6 +16,7 @@ import org.I0Itec.zkclient.ZkConnection;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 
 import java.io.File;
 import java.io.IOException;
@@ -97,8 +98,8 @@ public class KafkaProducerConfiguration {
         return props;
     }
 
-    final private Map<String, KafkaProducer<?, ?>> producers;
-    final private List<Topic> topics;
+    private final Map<String, KafkaProducer<?, ?>> producers;
+    private final List<Topic> topics;
 
     private KafkaProducerConfiguration(Map<String, KafkaProducer<?, ?>> producers, List<Topic> topics) {
         this.producers = producers;
@@ -112,13 +113,13 @@ public class KafkaProducerConfiguration {
     public static void insertIntoKafka(String topicName, List<?> dataToInject) {
         KafkaProducer<?, ?> producer = instance.producers.get(topicName);
         log.debug("Sending to Kafka " + dataToInject.size() + " dataToInject");
-        dataToInject.forEach(t -> {
-            producer.send(new ProducerRecord(topicName, null, t), (rm, exception) -> {
-                if (exception != null) {
-                    log.error(exception.getMessage(), exception);
-                }
-            });
-        });
+        dataToInject.forEach(t -> producer.send(new ProducerRecord(topicName, null, t), KafkaProducerConfiguration::printException));
+    }
+
+    private static void printException(RecordMetadata rm, Exception exception) {
+        if (exception != null) {
+            log.error(exception.getMessage(), exception);
+        }
     }
 
 }

@@ -16,6 +16,8 @@ import java.util.stream.Stream;
 @Slf4j
 public class FieldGeneratorFactory {
 
+    private FieldGeneratorFactory() {}
+
     static ValueGenerator<?> valueGenerator(Field field) {
         final Class<?> castTo = Reflections.getCustomCastTo(field.getCast());
         ValueGenerator<?> fieldGenerator = null;

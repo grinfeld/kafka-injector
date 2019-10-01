@@ -55,7 +55,7 @@ public abstract class PrimitiveNumberRangeGenerator extends RangeGenerator<Numbe
     public Class<?> getType() { return type; }
     public Random getRandom() { return random; }
 
-    abstract protected Number normalize(Number value);
+    protected abstract Number normalize(Number value);
 
     @Override
     public Class<Number> getCastTo() {

@@ -9,6 +9,8 @@ import static java.time.Duration.ofNanos;
 
 public class Utils {
 
+    private Utils() {}
+
     private static final BigInteger BI_NANOS_PER_MICRO = BigInteger.valueOf(1000L);
     private static final BigInteger BI_NANOS_PER_MILLI = BigInteger.valueOf(1000000L);
     private static final BigInteger BI_NANOS_PER_SECOND = BigInteger.valueOf(1000000000L);

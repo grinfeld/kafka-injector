@@ -14,6 +14,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Reflections {
+
+    private Reflections() {}
+
     private static final Map<Class<?>, Method[]> declaredMethodsCache = new ConcurrentHashMap<>(256);
     private static final Method[] NO_METHODS = {};
     private static final Map<Class<?>, Class<?>> primitives = new ConcurrentHashMap<>();

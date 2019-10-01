@@ -36,19 +36,23 @@ public abstract class NestedGenerator<T> implements ValueGenerator<T> {
         try {
             T t = createInstance();
             for (Field f : fields) {
-                try {
-                    Method method = populateMethod(f);
-                    Object generated = FieldGeneratorFactory.generateFieldValue(f);
-                    populate(generated, method, t, f);
-                } catch (Exception e) {
-                    Utils.rethrowRuntimeException(e);
-                }
+                populateData(t, f);
             }
             return t;
         } catch (Exception e) {
             Utils.rethrowRuntimeException(e);
         }
         return null;
+    }
+
+    private void populateData(T t, Field f) {
+        try {
+            Method method = populateMethod(f);
+            Object generated = FieldGeneratorFactory.generateFieldValue(f);
+            populate(generated, method, t, f);
+        } catch (Exception e) {
+            Utils.rethrowRuntimeException(e);
+        }
     }
 
     @Override

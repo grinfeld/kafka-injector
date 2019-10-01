@@ -155,4 +155,3 @@ Main element is **kafka**. It has few nested elements, as follows:
         1. **delayAfter** - the first element for flow control. If set, defines delay before starting to emit the 1st element (doesn't affect emitting other element, except the first one). (Number) milli seconds. _Optional_, (**default 0**).
         1. **interval** - the interval manage flow control. It defines interval for generating elements. For example, when putting 1 (ms) - means that it will generate value every 1 milli second, i.e. generates value, wait 1 milli second, then generates the second value and so on.  (Number) milli seconds. _Optional_, (**default 0**).
         1. **takeWhile** - the number of requests to take until stop generating the new ones. Means, limit the number of generated requests to specified value in the parameter. (Number) milli seconds. _Optional_, (**default 0**).
-        

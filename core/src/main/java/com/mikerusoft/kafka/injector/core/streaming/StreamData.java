@@ -20,27 +20,22 @@ import java.util.stream.Stream;
 @Slf4j
 public class StreamData {
 
+    private StreamData() {}
+
     public static <T> Disposable subscribe(List<Topic> topics, BiConsumer<String, List<T>> consumer, Duration runningWindow) {
         Objects.requireNonNull(consumer);
         Flux<T> stream = Flux.fromIterable(topics)
             .flatMap(StreamData::createTopicGeneratorStreams)
             .doOnError(t -> log.error("Error on createTopicGeneratorStreams", t))
-            .compose(new Function<Flux<Pair<String, List<Object>>>, Publisher<T>>() {
-                @Override
-                public Publisher<T> apply(Flux<Pair<String, List<Object>>> pairFlux) {
-                    return pairFlux
-                        .doOnNext(l -> consumer.accept(l.getLeft(), (List<T>) l.getRight()))
-                        .doOnError(t -> log.error("Error on sending consumer", t))
-                        .flatMap(t -> Flux.fromIterable((List<T>) t.getRight()));
-                }
-            }
-        );
+            .compose(pairFlux -> pairFlux
+                .doOnNext(l -> consumer.accept(l.getLeft(), (List<T>) l.getRight()))
+                .doOnError(t -> log.error("Error on sending consumer", t))
+                .flatMap(t -> Flux.fromIterable((List<T>) t.getRight()))
+            );
         if (runningWindow != null) {
             stream = stream.take(runningWindow);
         }
-        return stream.subscribe(t -> {
-                //log.debug(String.valueOf(t));
-        });
+        return stream.subscribe();
     }
 
     private static <T> Flux<Pair<String, List<T>>> createTopicGeneratorStreams(Topic topic) {

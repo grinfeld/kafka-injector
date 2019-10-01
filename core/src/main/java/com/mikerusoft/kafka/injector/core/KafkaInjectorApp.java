@@ -33,15 +33,14 @@ public class KafkaInjectorApp {
 
     public static void waitUntilStopFor(long time, TimeUnit unit) throws InterruptedException {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
-        executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                try { Thread.sleep(unit.toMillis(time)); } catch (Exception ignore) {}
-                log.debug("End");
-                System.exit(0);
-            }
-        });
+        executorService.submit(() -> exitApp(time, unit));
         executorService.awaitTermination(time, unit);
+    }
+
+    private static void exitApp(long time, TimeUnit unit) {
+        try { Thread.sleep(unit.toMillis(time)); } catch (Exception ignore) { /* nothing */ }
+        log.debug("End");
+        System.exit(0);
     }
 
 }

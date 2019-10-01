@@ -16,6 +16,8 @@ import java.util.stream.Stream;
 
 public class GeneratorUtils {
 
+    private GeneratorUtils() {}
+
     static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss.SSS";
 
     static Functions functions(Class<?> type) {
