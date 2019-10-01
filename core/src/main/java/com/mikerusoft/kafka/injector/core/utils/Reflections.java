@@ -4,19 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Value;
-import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.lang.reflect.Modifier;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Reflections {
+    private static final Map<Class<?>, Method[]> declaredMethodsCache = new ConcurrentHashMap<>(256);
+    private static final Method[] NO_METHODS = {};
     private static final Map<Class<?>, Class<?>> primitives = new ConcurrentHashMap<>();
     static {
         Reflections.primitives.put(Integer.class, Integer.TYPE);
@@ -30,13 +29,74 @@ public class Reflections {
 
     private static final Map<String, Method> methodCache = new ConcurrentHashMap<>();
 
+    public static Method findMethod(Class<?> clazz, String name, Class<?>... paramTypes) {
+        Utils.notNull(clazz, "Class must not be null");
+        Utils.notNull(name, "Method name must not be null");
+        Class<?> searchType = clazz;
+        while (searchType != null) {
+            Method[] methods = (searchType.isInterface() ? searchType.getMethods() : getDeclaredMethods(searchType));
+            for (Method method : methods) {
+                if (name.equals(method.getName()) &&
+                        (paramTypes == null || Arrays.equals(paramTypes, method.getParameterTypes()))) {
+                    return method;
+                }
+            }
+            searchType = searchType.getSuperclass();
+        }
+        return null;
+    }
+
+    private static List<Method> findConcreteMethodsOnInterfaces(Class<?> clazz) {
+        List<Method> result = null;
+        for (Class<?> ifc : clazz.getInterfaces()) {
+            for (Method ifcMethod : ifc.getMethods()) {
+                if (!Modifier.isAbstract(ifcMethod.getModifiers())) {
+                    if (result == null) {
+                        result = new LinkedList<>();
+                    }
+                    result.add(ifcMethod);
+                }
+            }
+        }
+        return result;
+    }
+
+    private static Method[] getDeclaredMethods(Class<?> clazz) {
+        Utils.notNull(clazz, "Class must not be null");
+        Method[] result = declaredMethodsCache.get(clazz);
+        if (result == null) {
+            try {
+                Method[] declaredMethods = clazz.getDeclaredMethods();
+                List<Method> defaultMethods = findConcreteMethodsOnInterfaces(clazz);
+                if (defaultMethods != null) {
+                    result = new Method[declaredMethods.length + defaultMethods.size()];
+                    System.arraycopy(declaredMethods, 0, result, 0, declaredMethods.length);
+                    int index = declaredMethods.length;
+                    for (Method defaultMethod : defaultMethods) {
+                        result[index] = defaultMethod;
+                        index++;
+                    }
+                }
+                else {
+                    result = declaredMethods;
+                }
+                declaredMethodsCache.put(clazz, (result.length == 0 ? NO_METHODS : result));
+            }
+            catch (Throwable ex) {
+                throw new IllegalStateException("Failed to introspect Class [" + clazz.getName() +
+                        "] from ClassLoader [" + clazz.getClassLoader() + "]", ex);
+            }
+        }
+        return result;
+    }
+
     public static Method findConsumerMethod(Class<?> type, String name, Class<?> param) {
         Method method = methodCache.get(type.getName() + "_" + name);
         if (method == null) {
-            method = ReflectionUtils.findMethod(type, name, param);
+            method = findMethod(type, name, param);
             if (method == null) {
                 // maybe method defined with primitive parameter, so let's try with primitive one
-                method = ReflectionUtils.findMethod(type, name, getPrimitiveType(param));
+                method = findMethod(type, name, getPrimitiveType(param));
             }
 
             if (method == null) {

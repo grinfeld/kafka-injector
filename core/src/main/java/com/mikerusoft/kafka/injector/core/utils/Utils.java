@@ -74,4 +74,9 @@ public class Utils {
                 throw new IllegalStateException("Unreachable");
         }
     }
+
+    public static void notNull(Object obj, String msg) {
+        if (obj == null)
+            throw new NullPointerException(msg);
+    }
 }
