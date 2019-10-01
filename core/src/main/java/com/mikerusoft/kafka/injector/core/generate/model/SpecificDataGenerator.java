@@ -10,8 +10,8 @@ import java.lang.reflect.Method;
 
 @Slf4j
 public abstract class SpecificDataGenerator<T, B> implements DataGenerator<T> {
-    abstract protected B createBuilder();
-    abstract protected T generateObject(B builder);
+    protected abstract B createBuilder();
+    protected abstract T generateObject(B builder);
 
     @Override
     public T generate(Field[] fields) {

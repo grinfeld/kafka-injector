@@ -30,6 +30,4 @@ public class StamMessage {
     private GroupData groupData;
     private String threadID;
     private String threadName;
-    //private Map<String, Object> extraStorageParams;
-
 }

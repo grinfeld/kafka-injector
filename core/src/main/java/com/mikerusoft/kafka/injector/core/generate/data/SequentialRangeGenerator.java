@@ -37,10 +37,9 @@ public class SequentialRangeGenerator<T extends Number> implements ValueGenerato
     @Override
     public T generate() {
         // I don't want to deal with synchronization. Maximum in case ofDuration race condition method will return same value for 2 or more threads
-        T next = (T) GeneratorUtils.functions(type).getAdd().apply(this.next, new Long(1));
-        this.next = (T) GeneratorUtils.functions(type).getMod().apply(next, size);
-        T apply = (T) GeneratorUtils.functions(type).getAdd().apply(next, start);
-        return apply;
+        T nextStepValue = (T) GeneratorUtils.functions(type).getAdd().apply(this.next, 1);
+        this.next = (T) GeneratorUtils.functions(type).getMod().apply(nextStepValue, size);
+        return (T) GeneratorUtils.functions(type).getAdd().apply(nextStepValue, start);
     }
 
     @Override
