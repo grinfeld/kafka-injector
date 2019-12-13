@@ -7,9 +7,9 @@
     <groupId>com.mikerusoft.tools.kafka-injector</groupId>
     <artifactId>kafka-injector</artifactId>
     <packaging>pom</packaging>
-    <version>0.9-SNAPSHOT</version>
+    <version>1.0.0</version>
     <modules>
-        <module>core</module>
+        <module>kafka-injector-core</module>
         <module>examples</module>
     </modules>
 

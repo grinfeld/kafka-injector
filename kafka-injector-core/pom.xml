@@ -5,12 +5,12 @@
     <parent>
         <artifactId>kafka-injector</artifactId>
         <groupId>com.mikerusoft.tools.kafka-injector</groupId>
-        <version>0.9-SNAPSHOT</version>
+        <version>1.0.0</version>
         <relativePath>..</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>core</artifactId>
+    <artifactId>kafka-injector-core</artifactId>
 
     <properties>
         <generex.version>1.0.2</generex.version>
@@ -20,6 +20,8 @@
         <kafka.version>2.1.0</kafka.version>
         <maven.assembly.plugin.version>3.1.0</maven.assembly.plugin.version>
         <lang3.version>3.8.1</lang3.version>
+        <source.plugin.version>3.1.0</source.plugin.version>
+        <javadoc.plugin.version>3.1.1</javadoc.plugin.version>
     </properties>
 
     <dependencies>
@@ -73,7 +75,51 @@
 
     <build>
         <plugins>
-
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${source.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${javadoc.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>javadoc</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <!-- switch on dependency-driven aggregation -->
+                            <includeDependencySources>false</includeDependencySources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--<plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-gpg-plugin</artifactId>
+               <version>1.6</version>
+               <executions>
+                   <execution>
+                       <id>sign-artifacts</id>
+                       <phase>verify</phase>
+                       <goals>
+                           <goal>sign</goal>
+                       </goals>
+                   </execution>
+               </executions>
+           </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -82,7 +128,7 @@
                     <descriptors>
                         <descriptor>src/main/resources/assembly/assembly.xml</descriptor>
                     </descriptors>
-                    <appendAssemblyId>false</appendAssemblyId>
+                    <appendAssemblyId>true</appendAssemblyId>
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
