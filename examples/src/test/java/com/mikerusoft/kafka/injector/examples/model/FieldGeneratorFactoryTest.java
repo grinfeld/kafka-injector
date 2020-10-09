@@ -20,7 +20,7 @@ public class FieldGeneratorFactoryTest {
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         KafkaProperties kafkaProperties = mapper.readValue(ClassLoader.getSystemResource("test.yml"),
                 KafkaProperties.class);
-        Generator generator = kafkaProperties.getKafka().getTopics()[0].getGenerators()[0];
+        Generator generator = kafkaProperties.getKafka().getTopics()[0].getValueGenerators()[0];
         Object generate = generator.getGenerator().generate(generator.getFields());
         assertThat(generate).isNotNull().isInstanceOf(StamMessageWrapper.class);
         StamMessageWrapper message = (StamMessageWrapper)generate;
@@ -38,7 +38,7 @@ public class FieldGeneratorFactoryTest {
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         KafkaProperties kafkaProperties = mapper.readValue(ClassLoader.getSystemResource("status_report.yml"),
                 KafkaProperties.class);
-        Generator generator = kafkaProperties.getKafka().getTopics()[0].getGenerators()[0];
+        Generator generator = kafkaProperties.getKafka().getTopics()[0].getValueGenerators()[0];
         Object generate = generator.getGenerator().generate(generator.getFields());
         System.out.println(generate);
     }

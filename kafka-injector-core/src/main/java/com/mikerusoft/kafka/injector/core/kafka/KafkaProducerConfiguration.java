@@ -5,6 +5,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.mikerusoft.kafka.injector.core.properties.Kafka;
 import com.mikerusoft.kafka.injector.core.properties.KafkaProperties;
 import com.mikerusoft.kafka.injector.core.properties.Topic;
+import com.mikerusoft.kafka.injector.core.utils.Pair;
 import com.mikerusoft.kafka.injector.core.utils.Utils;
 import kafka.admin.AdminUtils;
 import kafka.admin.RackAwareMode;
@@ -110,10 +111,12 @@ public class KafkaProducerConfiguration {
         return instance.topics;
     }
 
-    public static void insertIntoKafka(String topicName, List<?> dataToInject) {
+    public static void insertIntoKafka(String topicName, List<Pair<Object, Object>> dataToInject) {
         KafkaProducer<?, ?> producer = instance.producers.get(topicName);
         log.debug("Sending to Kafka " + dataToInject.size() + " dataToInject");
-        dataToInject.forEach(t -> producer.send(new ProducerRecord(topicName, null, t), KafkaProducerConfiguration::printException));
+        dataToInject.forEach(pair ->
+                producer.send(new ProducerRecord(topicName, pair.getLeft(), pair.getRight()), KafkaProducerConfiguration::printException)
+        );
     }
 
     private static void printException(RecordMetadata rm, Exception exception) {

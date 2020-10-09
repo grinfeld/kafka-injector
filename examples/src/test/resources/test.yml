@@ -8,7 +8,7 @@ kafka:
     serializer:
       key: "org.apache.kafka.common.serialization.StringSerializer"
       value: "com.mikerusoft.kafka.injector.core.kafka.JsonSerializer"
-    generators:
+    valueGenerators:
     - type: "com.mikerusoft.kafka.injector.examples.model.ArchiveRawMessageGenerator"
       fields:
       - name: "setNetworkType"

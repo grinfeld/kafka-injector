@@ -19,7 +19,6 @@ public class Generator {
     private long instances=1;
     private long takeWhile;
 
-
     @JsonProperty("type")
     public String getType() {
         return generator == null ? null : generator.getClass().getName();
@@ -32,5 +31,11 @@ public class Generator {
         } catch (Exception e) {
             throw new RuntimeException("Filed to create DataGenerator with class" + type, e);
         }
+    }
+
+    public static Generator buildFromType(String type) {
+        Generator g = new Generator();
+        g.setType(type);
+        return g;
     }
 }

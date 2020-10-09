@@ -15,8 +15,17 @@ There are 3 parameters main app expects via System.getProperties() _(-Dname=valu
 1. **time** - number of time, according to **timeUnit** defined above
 
 Example: 
-``java -DkafkaInjectorConf=/somepath/kafka-injector/kafka.yml -DtimeUnit=HOURS -Dtime=1 -jar /somepath/kafka-injector/kafka-injector-1.0.0-jar-with-dependencies.jar``
+``java -DkafkaInjectorConf=/somepath/kafka-injector/kafka.yml -DtimeUnit=HOURS -Dtime=1 -jar /somepath/kafka-injector/kafka-injector-1.0.1-jar-with-dependencies.jar``
 
+## As maven dependency
+
+```
+    <dependency>
+        <groupId>com.mikerusoft</groupId>
+        <artifactId>kafka-injector-core</artifactId>
+        <version>${version}</version>
+    </dependency>
+```
 
 ## Here Example of configuration file
 
@@ -31,7 +40,7 @@ kafka:
     serializer:
       key: "org.apache.kafka.common.serialization.StringSerializer"
       value: "JsonSerializer"
-    generators:
+    valueGenerators:
     - type: "path.path.SomeGenerator"
       fields:
       - name: "setListValue"
@@ -130,7 +139,9 @@ Main element is **kafka**. It has few nested elements, as follows:
     1. **serializer** - element to define key and value serializers
         1. **key** - fully qualified class name for Kafka key serializer - _required_
         1. **value** - fully qualified class name for Kafka value serializer - _required_
-    1. **generators** - list of generators per topic
+    1. **keyGenerator** - generator for key to be set in Kafka (currently supported only one for all value generators)- _Optional_, default **null** as key
+        1. for list of valieus see in **valueGenerator** below.
+    1. **valueGenerators** - list of generators per topic
         1. **type** - fully qualified class name for Generator (String) (should be existed. See [generated package](kafka-injector-core/src/main/java/com/mikerusoft/kafka/injector/core/generate/model/) and should implement [DataGenerator](kafka-injector-core/src/main/java/com/mikerusoft/kafka/injector/core/generate/model/DataGenerator.java)) (String) _required_
         1. **fields** - list of fields to generate
             1. **name** - field name to generate. Actually, it should be name of setter (or adder) in class you generate (method returned ``void`` and **only one** method argument). (String) _required_

@@ -8,7 +8,14 @@ kafka:
     serializer:
       key: "org.apache.kafka.common.serialization.StringSerializer"
       value: "com.mikerusoft.kafka.injector.core.kafka.JsonSerializer"
-    generators:
+    keyGenerator:
+      type: "com.mikerusoft.kafka.injector.core.generate.model.SingleRootGenerator"
+      fields:
+        - name: "does_not_matter"
+          type: "regex"
+          cast: "java.lang.String"
+          value: "[1-9][0-9]{7,7}"
+    valueGenerators:
     - type: "com.mikerusoft.kafka.injector.examples.model.ArchiveStatusReportRequestGenerator"
       fields:
       - name: "setKafkafied"

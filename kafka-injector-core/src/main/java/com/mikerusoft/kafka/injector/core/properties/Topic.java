@@ -13,7 +13,8 @@ public class Topic {
     private String clientIdConfig;
     private String name;
     private Serializer serializer;
-    private Generator[] generators;
+    private Generator[] valueGenerators;
+    private Generator keyGenerator;
     private Integer partitions=1;
     private Integer replicas=1;
 }
