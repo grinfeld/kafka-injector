@@ -6,7 +6,7 @@ addons:
   sonarcloud:
     organization: "grinfeld-github"
     token:
-      secure: "59f368c9896057f3fd0705d3f0783f30d67712b1" # encrypted value of your token
+      secure: "2a0693a9828ee3decf5ecc9e9c7b90b316c44d85" # encrypted value of your token
 
 script:
   # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
