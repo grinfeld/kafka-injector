@@ -15,7 +15,7 @@ There are 3 parameters main app expects via System.getProperties() _(-Dname=valu
 1. **time** - number of time, according to **timeUnit** defined above
 
 Example: 
-``java -DkafkaInjectorConf=/somepath/kafka-injector/kafka.yml -DtimeUnit=HOURS -Dtime=1 -jar /somepath/kafka-injector/kafka-injector-1.0.1-jar-with-dependencies.jar``
+``java -DkafkaInjectorConf=/somepath/kafka-injector/kafka.yml -DtimeUnit=HOURS -Dtime=1 -jar /somepath/kafka-injector/kafka-injector-version-jar-with-dependencies.jar``
 
 ## As maven dependency
 
