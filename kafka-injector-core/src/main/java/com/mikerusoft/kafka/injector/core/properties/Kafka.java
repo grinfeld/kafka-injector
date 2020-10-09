@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Kafka {
     private String url;
+    private String schemaRegistryUrl;
     private boolean createTopics;
     private Integer batchSize;
     private int lingerMs = 1;

@@ -38,7 +38,7 @@ public class KafkaProducerConfiguration {
                     mapper.readValue(ClassLoader.getSystemResource("kafka.yml"), KafkaProperties.class).getKafka():
                     mapper.readValue(new File(kafkaInjectorConf), KafkaProperties.class).getKafka();
             Map<String, KafkaProducer<?, ?>> producers = Stream.of(kafkaProperties.getTopics())
-                .map(kp -> KafkaProducerConfiguration.createKafkaProducer(kafkaProperties, kp, kafkaProperties.getUrl()))
+                .map(kp -> KafkaProducerConfiguration.createKafkaProducerProps(kafkaProperties, kp, kafkaProperties.getUrl()))
                 .distinct()
                 .collect(Collectors.toMap(
                     properties -> (String)properties.get(TOPIC_PARAM_NAME),
@@ -80,13 +80,17 @@ public class KafkaProducerConfiguration {
         }
     }
 
-    private static Properties createKafkaProducer(Kafka kafkaProperties, Topic topic, String url) {
+    private static Properties createKafkaProducerProps(Kafka kafkaProperties, Topic topic, String url) {
         Properties props = new Properties();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, url);
         props.put(ProducerConfig.CLIENT_ID_CONFIG, topic.getClientIdConfig());
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, topic.getSerializer().getValue());
         String keySerializer = topic.getSerializer().getKey();
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, keySerializer);
+
+        if (!Utils.isEmpty(kafkaProperties.getSchemaRegistryUrl())) {
+            props.put("schema.registry.url", kafkaProperties.getSchemaRegistryUrl());
+        }
 
         props.put(TOPIC_PARAM_NAME, topic.getName());
         props.put(ProducerConfig.ACKS_CONFIG, String.valueOf(-1));

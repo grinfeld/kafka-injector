@@ -124,9 +124,10 @@ kafka:
       #takeWhile: 3000
 ```
 
-Main element is **kafka**. It has few nested elements, as follows:
+Main element is **kafka**. It has few (many) nested elements, as follows:
 
-1. **url** - Kafka's (zookeeper) broker url (String) - _required_
+1. **url** - Kafka's broker url (String) - _required_
+1. **schemaRegistryUrl** - schema-registry url. Should be populated when using avro serializer - _optional_
 1. **createTopics** - if true, tries to create topics (if not exist) before starting injection process - (Boolean) _Optional_, default: false. _Note:_ the tool still could create topics automatically during the first request - depends on kafka settings
 1. **batchSize** - kafka's producer batch size configuration in bytes. (Number) _Optional_, default using Kafka's default.
 1. **lingerMs** - kafka's producer linger ms configuration. (Number) _Optional_, default using Kafka's default.
@@ -143,7 +144,7 @@ Main element is **kafka**. It has few nested elements, as follows:
     1. **valueGenerators** - list of generators per topic
         1. **type** - fully qualified class name for Generator (String) (should be existed. See [generated package](kafka-injector-core/src/main/java/com/mikerusoft/kafka/injector/core/generate/model/) and should implement [DataGenerator](kafka-injector-core/src/main/java/com/mikerusoft/kafka/injector/core/generate/model/DataGenerator.java)) (String) _required_
         1. **fields** - list of fields to generate
-            1. **name** - field name to generate. Actually, it should be name of setter (or adder) in class you generate (method returned ``void`` and **only one** method argument). (String) _required_
+            1. **name** - field name to generate. Actually, it should be name of setter (or adder) in class you generate (suitable for any method return ``void`` and has **only one** method argument). (String) _required_
             1. **type** - type of value generator (String) _required_. There few different types (from enum [GeneratorType](kafka-injector-core/src/main/java/com/mikerusoft/kafka/injector/core/properties/GeneratorType.java))
                 1. **REGEX** - generates according to regex specified in **value** element of field
                 1. **NIL** - generates null. Ignore **value** element of field
@@ -158,6 +159,7 @@ Main element is **kafka**. It has few nested elements, as follows:
                 1. **TIMESTAMP_REGEX** - set timestamp. Generates timestamp according to predefined date format as regex (**yyyy-MM-dd HH:mm:ss.SSS**, e.g. **2018\\-07\\-11 12\\:30\\:45\\.123**) - _In this case better to use **TIMESTAMP** from above_. Using regex in date expression: **2018\\-07\\-11 12\\:30\\:45\\.[0-9]{3,3}** - milli seconds part generated from regex **[0-9]{3,3}**.
                 1. **NESTED_OBJECT** - generates Object according to nested configuration. **cast** should be object's full class name to be generated. Subfields should be defined under **nestedFields** element and it shouldn't be empty.
                 1. **NESTED_LIST** - generates List (of values of objects) according to nested configuration. **cast** - should be ``java.util.List`` (currently, the only valid value). Subfields should be defined under **nestedFields** element and it shouldn't be empty.
+                1. **ENUM** - pick random or fixed value from one of Enums. **cast** - should be enum class. If **value** i set - always returns the same value, else returns random enum value from this enum
             1. **cast** - fully qualified class name to cast/convert value to. The value should be primitive boxing classes (``java.lang.Long.class`` and etc) or primitive (``java.lang.Long.TYPE``) or ``java.lang.String``. 
             1. **value** - value to use for generation. (String) _required_ depends on **type** value (see list above).
             1. **nested_fields** - in case of complex objects, it should be populated according to **type** value. Currently only **NESTED_OBJECT** and **NESTED_LIST** supported.

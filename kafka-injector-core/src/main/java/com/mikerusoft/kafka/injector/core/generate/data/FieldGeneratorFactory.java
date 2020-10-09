@@ -73,6 +73,12 @@ public class FieldGeneratorFactory {
                     () -> new ValueFromListGenerator<>(castTo, field.getValue())
                 );
                 break;
+            case ENUM:
+                fieldGenerator = getOrInitValueGenerator(
+                    generateStringKey(EnumGenerator.class, field.getCast().getName(), field.getValue(), field.getUid()),
+                    () -> new EnumGenerator<>(field.getCast(), field.getValue())
+                );
+                break;
             case RANDOM_LIST:
                 fieldGenerator = getOrInitValueGenerator(
                     generateStringKey(RandomPrimitiveValueGenerated.class, field.getCast().getName(), field.getValue(), field.getUid()),

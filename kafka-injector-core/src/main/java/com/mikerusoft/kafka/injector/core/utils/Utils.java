@@ -24,21 +24,6 @@ public class Utils {
         throw new RuntimeException(e);
     }
 
-    public static String toString(byte[] arr) {
-        if (arr == null)
-            return "null";
-        if (arr.length == 0)
-            return "[]";
-
-        StringBuilder str = new StringBuilder("[");
-        for (int i=0; i<arr.length; i++) {
-             str.append(i==0 ? "" : ",").append(arr[i]);
-        }
-        str.append("]");
-
-        return str.toString();
-    }
-
     public static <T> T[] createArray(Class<T> type, int size) {
         //noinspection unchecked
         return (T[])Array.newInstance(type, size);

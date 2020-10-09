@@ -22,20 +22,24 @@ public class StreamData {
 
     private StreamData() {}
 
-    public static <K, V> Disposable subscribe(List<Topic> topics, BiConsumer<String, List<Pair<K,V>>> consumer, Duration runningWindow) {
+    public static <K, V> Flux<Pair<K,V>> createStream(List<Topic> topics, BiConsumer<String, List<Pair<K,V>>> consumer, Duration runningWindow) {
         Objects.requireNonNull(consumer);
         Flux<Pair<K,V>> stream = Flux.fromIterable(topics)
-            .flatMap(StreamData::<K, V>createTopicGeneratorStreams)
-            .doOnError(t -> log.error("Error on createTopicGeneratorStreams", t))
-            .compose(pairFlux -> pairFlux
-                .doOnNext(l -> consumer.accept(l.getLeft(), l.getRight()))
-                .doOnError(t -> log.error("Error on sending consumer", t))
-                .flatMap(t -> Flux.fromIterable(t.getRight()))
-            );
+                .flatMap(StreamData::<K, V>createTopicGeneratorStreams)
+                .doOnError(t -> log.error("Error on createTopicGeneratorStreams", t))
+                .compose(pairFlux -> pairFlux
+                        .doOnNext(l -> consumer.accept(l.getLeft(), l.getRight()))
+                        .doOnError(t -> log.error("Error on sending consumer", t))
+                        .flatMap(t -> Flux.fromIterable(t.getRight()))
+                );
         if (runningWindow != null) {
             stream = stream.take(runningWindow);
         }
-        return stream.subscribe();
+        return stream;
+    }
+
+    public static <K, V> Disposable subscribe(List<Topic> topics, BiConsumer<String, List<Pair<K,V>>> consumer, Duration runningWindow) {
+        return createStream(topics, consumer, runningWindow).subscribe();
     }
 
     private static <K, V> Flux<Pair<String, List<Pair<K, V>>>> createTopicGeneratorStreams(Topic topic) {

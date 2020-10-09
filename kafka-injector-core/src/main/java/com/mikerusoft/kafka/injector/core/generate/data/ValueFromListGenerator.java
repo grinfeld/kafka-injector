@@ -28,6 +28,7 @@ public class ValueFromListGenerator<T> implements ValueGenerator<T> {
     }
 
     public ValueFromListGenerator(Class<T> type, List<T> t) {
+        this.type = type;
         init(type, t);
     }
 

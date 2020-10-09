@@ -1,6 +1,6 @@
 ## Notes
 
-Some of classes have private variable of type ``java.util.Random``.
+Some of the classes have private variable of type ``java.util.Random``.
  
 It's not defined as static, because if we work in multi-threaded environment, 
 it will reduce time efficiency, since it's implemented with use of ``synchronization``

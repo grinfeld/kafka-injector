@@ -1,0 +1,43 @@
+kafka:
+  url: "localhost:9092"
+  batchSize: 250000
+  lingerMs: 5
+  topics:
+  - name: "IN-RAW"
+    client_id_config: "sometext"
+    serializer:
+      key: "org.apache.kafka.common.serialization.StringSerializer"
+      value: "com.mikerusoft.kafka.injector.core.kafka.JsonSerializer"
+    keyGenerator:
+      type: "com.mikerusoft.kafka.injector.core.generate.model.SingleRootGenerator"
+      fields:
+      - name: "does_not_matter"
+        type: "fixed"
+        cast: "java.lang.Integer"
+        value: "110"
+    valueGenerators:
+    - type: "com.mikerusoft.kafka.injector.core.generate.model.SingleRootGenerator"
+      fields:
+        - name: "root"
+          type: "nested_object"
+          cast: "com.mikerusoft.kafka.injector.core.streaming.TestObject"
+          nestedFields:
+          - name: "setNested"
+            type: "nested_object"
+            cast: "com.mikerusoft.kafka.injector.core.streaming.TestNestedObject"
+            nestedFields:
+            - name: "setStr"
+              cast: "java.lang.String"
+              type: "fixed"
+              value: "string"
+            - name: "setNumber"
+              cast: "java.lang.Integer"
+              type: "fixed"
+              value: "25"
+            - name: "setTestEnum"
+              cast: "com.mikerusoft.kafka.injector.core.streaming.TestEnum"
+              type: "enum"
+              value: "FIRST"
+      delayAfter: 0
+      interval: 10
+      takeWhile: 1

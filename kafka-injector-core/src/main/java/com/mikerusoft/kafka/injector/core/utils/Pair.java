@@ -1,13 +1,11 @@
 package com.mikerusoft.kafka.injector.core.utils;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
+@Builder(builderClassName = "Builder", builderMethodName = "of")
 public class Pair<L, R> {
 
     public static <L,R> Pair<L, R> of(L left, R right) {
@@ -16,12 +14,4 @@ public class Pair<L, R> {
 
     private L left;
     private R right;
-
-    public void setKey(L key) {
-        this.left = key;
-    }
-
-    public void setValue(R value) {
-        this.right = value;
-    }
 }

@@ -177,13 +177,13 @@ public class GeneratorUtils {
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     @Builder
     static class Functions<T> {
-        private Function<Random, T> random;
-        private Comparator<T> comparator;
-        private BiFunction<T, T, T> add;
-        private BiFunction<T, T, T> subtract;
-        private Function<String, T> parser;
-        private BiFunction<T, T, T> mod;
-        private BiFunction<T, T, T> divide;
+        Function<Random, T> random;
+        Comparator<T> comparator;
+        BiFunction<T, T, T> add;
+        BiFunction<T, T, T> subtract;
+        Function<String, T> parser;
+        BiFunction<T, T, T> mod;
+        BiFunction<T, T, T> divide;
 
         public T random(Random random) { return this.random.apply(random); }
         public T mod(T value, T modeFactor) { return this.mod.apply(value, modeFactor); }
