@@ -7,8 +7,8 @@ public class SingleRootGenerator implements DataGenerator<Object>  {
 
     @Override
     public Object generate(Field[] fields) {
-        if (fields == null || fields.length <= 0)
-            return null;
+        if (fields == null || fields.length != 1)
+            throw new IllegalArgumentException("SingleRootGenerator should have only one field");
         Field field = fields[0];
         return FieldGeneratorFactory.generateFieldValue(field);
     }
