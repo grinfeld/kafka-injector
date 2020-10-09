@@ -7,13 +7,8 @@ import com.mikerusoft.kafka.injector.core.properties.KafkaProperties;
 import com.mikerusoft.kafka.injector.core.properties.Topic;
 import com.mikerusoft.kafka.injector.core.utils.Pair;
 import com.mikerusoft.kafka.injector.core.utils.Utils;
-import kafka.admin.AdminUtils;
-import kafka.admin.RackAwareMode;
-import kafka.utils.ZKStringSerializer$;
-import kafka.utils.ZkUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.I0Itec.zkclient.ZkClient;
-import org.I0Itec.zkclient.ZkConnection;
+import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -22,6 +17,7 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -51,7 +47,7 @@ public class KafkaProducerConfiguration {
                 );
             List<Topic> topics = Stream.of(kafkaProperties.getTopics()).collect(Collectors.toList());
             if (kafkaProperties.isCreateTopics()) {
-                createTopicsIfDoesNotExist(kafkaProperties.getZkUrl(), topics);
+                createTopicsIfDoesNotExist(kafkaProperties.getUrl(), topics);
             }
             return new KafkaProducerConfiguration(
                 Collections.unmodifiableMap(producers),
@@ -63,25 +59,25 @@ public class KafkaProducerConfiguration {
         return null;
     }
 
-    private static void createTopicsIfDoesNotExist(String zkUrl, List<Topic> topics) {
+    private static void createTopicsIfDoesNotExist(String brokers, List<Topic> topics) {
+        try {
+            Properties props = new Properties();
+            props.setProperty(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, brokers);
+            AdminClient adminClient = KafkaAdminClient.create(props);
 
-        int sessionTimeOutInMs = 15 * 1000; // 15 secs
-        int connectionTimeOutInMs = 10 * 1000; // 10 secs
-
-        ZkClient zkClient = new ZkClient(zkUrl, sessionTimeOutInMs, connectionTimeOutInMs, ZKStringSerializer$.MODULE$);
-        ZkUtils zkUtils = new ZkUtils(zkClient, new ZkConnection(zkUrl), false);
-        Properties topicConfiguration = new Properties();
-
-        topics.stream().filter(topic -> !AdminUtils.topicExists(zkUtils, topic.getName())).forEach(topic -> {
-            try {
-                AdminUtils.createTopic(zkUtils, topic.getName(),
-                        Optional.ofNullable(topic.getPartitions()).orElse(1),
-                        Optional.ofNullable(topic.getReplicas()).orElse(0),
-                        topicConfiguration, RackAwareMode.Enforced$.MODULE$);
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to create topic " + topic.getName(), e);
-            }
-        });
+            Set<String> existedTopics = adminClient.listTopics().names().get(5, TimeUnit.SECONDS);
+            topics.stream().filter(t -> !existedTopics.contains(t.getName())).forEach(topic -> {
+                try {
+                    adminClient.createTopics(
+                        Collections.singletonList(new NewTopic(topic.getName(), Optional.ofNullable(topic.getPartitions()).orElse(1), Optional.ofNullable(topic.getReplicas()).orElse((short) 0)))
+                    ).all().get(5, TimeUnit.SECONDS);
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to create topic " + topic.getName(), e);
+                }
+            });
+        } catch (Exception e) {
+            Utils.rethrowRuntimeException(e);
+        }
     }
 
     private static Properties createKafkaProducer(Kafka kafkaProperties, Topic topic, String url) {

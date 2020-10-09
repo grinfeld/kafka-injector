@@ -16,5 +16,5 @@ public class Topic {
     private Generator[] valueGenerators;
     private Generator keyGenerator;
     private Integer partitions=1;
-    private Integer replicas=1;
+    private Short replicas=1;
 }

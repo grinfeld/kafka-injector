@@ -127,7 +127,6 @@ kafka:
 Main element is **kafka**. It has few nested elements, as follows:
 
 1. **url** - Kafka's (zookeeper) broker url (String) - _required_
-1. **zkUrl** - Zookeeper url for creating non-existing topics (String) - _required if **createTopics** is set to **true**_ if need to create topics before starting injection (depends on **createTopics** and kafka properties)
 1. **createTopics** - if true, tries to create topics (if not exist) before starting injection process - (Boolean) _Optional_, default: false. _Note:_ the tool still could create topics automatically during the first request - depends on kafka settings
 1. **batchSize** - kafka's producer batch size configuration in bytes. (Number) _Optional_, default using Kafka's default.
 1. **lingerMs** - kafka's producer linger ms configuration. (Number) _Optional_, default using Kafka's default.
