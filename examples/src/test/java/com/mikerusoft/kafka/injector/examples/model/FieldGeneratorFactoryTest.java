@@ -4,13 +4,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.mikerusoft.kafka.injector.core.properties.Generator;
 import com.mikerusoft.kafka.injector.core.properties.KafkaProperties;
+import com.mikerusoft.kafka.injector.core.streaming.StreamData;
 import com.mikerusoft.kafka.injector.examples.model.beans.wrappers.ExampleMessageWrapper;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+
+import java.time.Duration;
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@Slf4j
 public class FieldGeneratorFactoryTest {
 
 
@@ -38,8 +44,12 @@ public class FieldGeneratorFactoryTest {
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         KafkaProperties kafkaProperties = mapper.readValue(ClassLoader.getSystemResource("status_report.yml"),
                 KafkaProperties.class);
-        Generator generator = kafkaProperties.getKafka().getTopics()[0].getValueGenerators()[0];
+
+        StreamData.createStream(Arrays.asList(kafkaProperties.getKafka().getTopics()), (k, v) -> log.info("k: {}, v: {}", k, v.size()), Duration.ofMinutes(3))
+            .blockLast();
+
+      /*  Generator generator = kafkaProperties.getKafka().getTopics()[0].getValueGenerators()[0];
         Object generate = generator.getGenerator().generate(generator.getFields());
-        System.out.println(generate);
+        System.out.println(generate);*/
     }
 }

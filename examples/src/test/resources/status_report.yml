@@ -50,11 +50,11 @@ kafka:
                     type: "nested_object"
                     cast: "com.mikerusoft.kafka.injector.core.utils.Pair"
                     nestedFields:
-                      - name: "setKey"
+                      - name: "setLeft"
                         cast: "java.lang.String"
                         type: "fixed"
                         value: "EMAIL"
-                      - name: "setValue"
+                      - name: "setRight"
                         cast: "java.lang.String"
                         type: "fixed"
                         value: "stam@email.localhost"
@@ -187,5 +187,6 @@ kafka:
                             cast: "java.lang.String"
                             value: "PHONE"
       delayAfter: 0
-      interval: 10
-      #takeWhile: 3000
+      interval: 1
+      instances: 2
+      takeWhile: 10000

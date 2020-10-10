@@ -33,7 +33,7 @@ class GeneratorUtils {
                 .comparator(Comparator.comparingInt(o -> (int) o))
                 .add((i1, i2) -> i1.intValue() + i2.intValue())
                 .subtract((i1, i2) -> i1.intValue() - i2.intValue())
-                .parser(Integer::valueOf)
+                .parser(v -> Integer.valueOf(v.trim()))
                 .divide((i1,i2) -> i1.intValue() / i2.intValue())
                 .build(),
             Integer.class, Integer.TYPE
@@ -46,7 +46,7 @@ class GeneratorUtils {
                 .add((i1, i2) -> i1.longValue() + i2.longValue())
                 .subtract((i1, i2) -> i1.longValue() - i2.longValue())
                 .divide((i1,i2) -> i1.longValue() / i2.longValue())
-                .parser(Long::valueOf)
+                .parser(v -> Long.valueOf(v.trim()))
                 .build(),
             Long.class, Long.TYPE
         );
@@ -58,7 +58,7 @@ class GeneratorUtils {
                 .add((i1, i2) -> (short)(i1.shortValue() + i2.shortValue()))
                 .subtract((i1, i2) -> (short)(i1.shortValue() - i2.shortValue()))
                 .divide((i1,i2) -> i1.shortValue() / i2.shortValue())
-                .parser(Short::valueOf)
+                .parser(v -> Short.valueOf(v.trim()))
                 .build(),
             Short.class, Short.TYPE
         );
@@ -70,7 +70,7 @@ class GeneratorUtils {
                 .add((i1, i2) -> (byte)(i1.byteValue() + i2.byteValue()))
                 .subtract((i1, i2) -> (byte)(i1.byteValue() - i2.byteValue()))
                 .divide((i1,i2) -> i1.byteValue() / i2.byteValue())
-                .parser(Byte::valueOf)
+                .parser(v -> Byte.valueOf(v.trim()))
                 .build(),
             Byte.class, Byte.TYPE
         );
@@ -80,7 +80,7 @@ class GeneratorUtils {
                 .comparator(Comparator.comparingDouble(o -> (double) o))
                 .add((i1, i2) -> i1.doubleValue() + i2.doubleValue())
                 .subtract((i1, i2) -> i1.doubleValue() - i2.doubleValue())
-                .parser(Double::valueOf)
+                .parser(v -> Double.valueOf(v.trim()))
                 .build(),
             Double.class, Double.TYPE
         );
@@ -90,7 +90,7 @@ class GeneratorUtils {
                 .comparator(Comparator.comparingDouble(o -> (float) o))
                 .add((i1, i2) -> i1.floatValue() + i2.floatValue())
                 .subtract((i1, i2) -> i1.floatValue() - i2.floatValue())
-                .parser(Float::valueOf)
+                .parser(v -> Float.valueOf(v.trim()))
                 .build(),
             Float.class, Float.TYPE
         );
@@ -103,7 +103,7 @@ class GeneratorUtils {
                     return o1 ? -1 : 1;
                 })
                 .add((i1, i2) -> i1 && i2)
-                .parser(Boolean::valueOf)
+                .parser(v -> Boolean.parseBoolean(v.trim()))
                 .build(),
             Boolean.class, Boolean.TYPE
         );

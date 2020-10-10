@@ -2,7 +2,6 @@ package com.mikerusoft.kafka.injector.core.streaming;
 
 import com.mikerusoft.kafka.injector.core.generate.model.NothingGenerator;
 import com.mikerusoft.kafka.injector.core.properties.Generator;
-import com.mikerusoft.kafka.injector.core.properties.GeneratorType;
 import com.mikerusoft.kafka.injector.core.properties.Topic;
 import com.mikerusoft.kafka.injector.core.utils.Pair;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +27,8 @@ public class StreamData {
                 .flatMap(StreamData::<K, V>createTopicGeneratorStreams)
                 .doOnError(t -> log.error("Error on createTopicGeneratorStreams", t))
                 .compose(pairFlux -> pairFlux
+                        //.publishOn(Schedulers.fromExecutor(Executors.newFixedThreadPool(topics.size()*3)))
+                        .onBackpressureDrop()
                         .doOnNext(l -> consumer.accept(l.getLeft(), l.getRight()))
                         .doOnError(t -> log.error("Error on sending consumer", t))
                         .flatMap(t -> Flux.fromIterable(t.getRight()))
@@ -43,10 +44,10 @@ public class StreamData {
     }
 
     private static <K, V> Flux<Pair<String, List<Pair<K, V>>>> createTopicGeneratorStreams(Topic topic) {
+        int instancesPerTopic = countGenerators(topic);
         return Flux.just(topic)
             .map(StreamData::expandGenerators)
             .flatMap(Flux::fromStream)
-            .subscribeOn(Schedulers.fromExecutor(Executors.newFixedThreadPool(countGenerators(topic))))
             .flatMap(generatorPair ->
                 Flux.interval(
                     Duration.ofMillis(generatorPair.getRight().getDelayAfter()), // delay before starting to emit elements
@@ -59,8 +60,9 @@ public class StreamData {
                         // value generator
                         (V) g.getRight().getGenerator().generate(g.getRight().getFields())
                 ))
-                //.doOnNext(t -> { log.info("generated " + String.valueOf(t)); })
-            ).buffer(Duration.ofSeconds(1)).map(l -> Pair.of(topic.getName(), l))
+            )
+            .buffer(Duration.ofSeconds(1)).map(l -> Pair.of(topic.getName(), l))
+            .publishOn(Schedulers.fromExecutor(Executors.newFixedThreadPool(instancesPerTopic)))
         ;
     }
 
