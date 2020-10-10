@@ -2,13 +2,13 @@ package com.mikerusoft.kafka.injector.examples.model;
 
 import com.mikerusoft.kafka.injector.core.generate.model.SpecificDataGenerator;
 import com.mikerusoft.kafka.injector.examples.model.beans.*;
-import com.mikerusoft.kafka.injector.examples.model.beans.wrappers.StamMessageWrapper;
+import com.mikerusoft.kafka.injector.examples.model.beans.wrappers.ExampleMessageWrapper;
 import lombok.Data;
 
 import java.sql.Timestamp;
 import java.util.List;
 
-public class StamMessageGenerator extends SpecificDataGenerator<StamMessageWrapper, StamMessageGenerator.Builder> {
+public class ExampleMessageGenerator extends SpecificDataGenerator<ExampleMessageWrapper, ExampleMessageGenerator.Builder> {
 
     @Override
     protected Builder createBuilder() {
@@ -16,7 +16,7 @@ public class StamMessageGenerator extends SpecificDataGenerator<StamMessageWrapp
     }
 
     @Override
-    protected StamMessageWrapper generateObject(Builder builder) {
+    protected ExampleMessageWrapper generateObject(Builder builder) {
         if (builder == null)
             throw new NullPointerException("builder is null");
 
@@ -30,7 +30,7 @@ public class StamMessageGenerator extends SpecificDataGenerator<StamMessageWrapp
                 .attachment(builder.attachment).recipients(builder.recipients)
             .build();
 
-        return new StamMessageWrapper(builder.networkType, builder.sourceType, rawMessage, builder.kafkafied);
+        return new ExampleMessageWrapper(builder.networkType, builder.sourceType, rawMessage, builder.kafkafied);
     }
 
     @Data

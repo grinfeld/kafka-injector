@@ -15,7 +15,7 @@ There are 3 parameters main app expects via System.getProperties() _(-Dname=valu
 1. **time** - number of time, according to **timeUnit** defined above
 
 Example: 
-``java -DkafkaInjectorConf=/somepath/kafka-injector/kafka.yml -DtimeUnit=HOURS -Dtime=1 -jar /somepath/kafka-injector/kafka-injector-version-jar-with-dependencies.jar``
+``java -DkafkaInjectorConf=/somepath/kafka-injector/kafka.yml -DtimeUnit=HOURS -Dtime=1 -jar /somepath/kafka-injector/kafka-injector-$version-jar-with-dependencies.jar``
 
 ## As maven dependency
 
@@ -123,6 +123,7 @@ kafka:
       interval: 10
       #takeWhile: 3000
 ```
+## Configuration
 
 Main element is **kafka**. It has few (many) nested elements, as follows:
 
@@ -139,8 +140,8 @@ Main element is **kafka**. It has few (many) nested elements, as follows:
     1. **serializer** - element to define key and value serializers
         1. **key** - fully qualified class name for Kafka key serializer - _required_
         1. **value** - fully qualified class name for Kafka value serializer - _required_
-    1. **keyGenerator** - generator for key to be set in Kafka (currently supported only one for all value generators)- _Optional_, default **null** as key
-        1. for list of valieus see in **valueGenerator** below.
+    1. **keyGenerator** - generator for key to be set in Kafka (currently supported only one keyGenerator for all valueGenerators in the topic)- _Optional_, default **null**
+        1. for list of values see in **valueGenerator** below.
     1. **valueGenerators** - list of generators per topic
         1. **type** - fully qualified class name for Generator (String) (should be existed. See [generated package](kafka-injector-core/src/main/java/com/mikerusoft/kafka/injector/core/generate/model/) and should implement [DataGenerator](kafka-injector-core/src/main/java/com/mikerusoft/kafka/injector/core/generate/model/DataGenerator.java)) (String) _required_
         1. **fields** - list of fields to generate
@@ -159,7 +160,7 @@ Main element is **kafka**. It has few (many) nested elements, as follows:
                 1. **TIMESTAMP_REGEX** - set timestamp. Generates timestamp according to predefined date format as regex (**yyyy-MM-dd HH:mm:ss.SSS**, e.g. **2018\\-07\\-11 12\\:30\\:45\\.123**) - _In this case better to use **TIMESTAMP** from above_. Using regex in date expression: **2018\\-07\\-11 12\\:30\\:45\\.[0-9]{3,3}** - milli seconds part generated from regex **[0-9]{3,3}**.
                 1. **NESTED_OBJECT** - generates Object according to nested configuration. **cast** should be object's full class name to be generated. Subfields should be defined under **nestedFields** element and it shouldn't be empty.
                 1. **NESTED_LIST** - generates List (of values of objects) according to nested configuration. **cast** - should be ``java.util.List`` (currently, the only valid value). Subfields should be defined under **nestedFields** element and it shouldn't be empty.
-                1. **ENUM** - pick random or fixed value from one of Enums. **cast** - should be enum class. If **value** i set - always returns the same value, else returns random enum value from this enum
+                1. **ENUM** - pick random value from one of Enums or fixed value. **cast** - should be enum class. If **value** i set - always returns the same value, else returns random enum value from this enum
             1. **cast** - fully qualified class name to cast/convert value to. The value should be primitive boxing classes (``java.lang.Long.class`` and etc) or primitive (``java.lang.Long.TYPE``) or ``java.lang.String``. 
             1. **value** - value to use for generation. (String) _required_ depends on **type** value (see list above).
             1. **nested_fields** - in case of complex objects, it should be populated according to **type** value. Currently only **NESTED_OBJECT** and **NESTED_LIST** supported.
@@ -167,3 +168,13 @@ Main element is **kafka**. It has few (many) nested elements, as follows:
         1. **delayAfter** - the first element for flow control. If set, defines delay before starting to emit the 1st element (doesn't affect emitting other element, except the first one). (Number) milli seconds. _Optional_, (**default 0**).
         1. **interval** - the interval manage flow control. It defines interval for generating elements. For example, when putting 1 (ms) - means that it will generate value every 1 milli second, i.e. generates value, wait 1 milli second, then generates the second value and so on.  (Number) milli seconds. _Optional_, (**default 0**).
         1. **takeWhile** - the number of requests to take until stop generating the new ones. Means, limit the number of generated requests to specified value in the parameter. (Number) milli seconds. _Optional_, (**default 0**).
+
+## Custom Generator
+
+If you have POJOs with regular set and get methods for fields and empty constructor, you have everything to generate data and put it in Kafka.
+
+But if for some reasons, one of classes doesn't have set and get methods for fields or any other restriction, you can implement your own generator by extending
+[SpecificDataGenerator<T, B>](kafka-injector-core/src/main/java/com/mikerusoft/kafka/injector/core/generate/model/SpecificDataGenerator.java)
+where ``T`` is your object to send to Kafka and ``B`` is a builder to use instead of ``T``.
+
+See [example](examples/src/main/java/com/mikerusoft/kafka/injector/examples/model/ExampleMessageGenerator.java)

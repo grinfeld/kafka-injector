@@ -6,8 +6,8 @@ import lombok.NoArgsConstructor;
 
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class StamMessageWrapper extends IncomingDataWrapper<StamMessage> {
-    public StamMessageWrapper(String networkType, String sourceType, StamMessage body, boolean kafkafied) {
+public class ExampleMessageWrapper extends IncomingDataWrapper<StamMessage> {
+    public ExampleMessageWrapper(String networkType, String sourceType, StamMessage body, boolean kafkafied) {
         super(networkType, sourceType, body, kafkafied);
     }
 }

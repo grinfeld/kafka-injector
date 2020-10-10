@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "typ", defaultImpl = StamMessageWrapper.class)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "typ", defaultImpl = ExampleMessageWrapper.class)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
