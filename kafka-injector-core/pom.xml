@@ -2,16 +2,37 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>kafka-injector</artifactId>
-        <groupId>com.mikerusoft</groupId>
-        <version>1.0.3</version>
-        <relativePath>..</relativePath>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
-    <artifactId>kafka-injector-core</artifactId>
 
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.mikerusoft</groupId>
+    <artifactId>kafka-injector-core</artifactId>
+    <version>1.0.4</version>
+    <name>Kafka Injector Core</name>
+    <description>Library to generate random data and to put it in Kafka for test purposes</description>
+    <developers>
+        <developer>
+            <name>Grinfeld Michael</name>
+            <url>https://github.com/grinfeld/</url>
+        </developer>
+    </developers>
+    <url>https://github.com/grinfeld/kafka-injector</url>
+    <scm>
+        <url>https://github.com/grinfeld/kafka-injector</url>
+        <connection>git@github.com:grinfeld/kafka-injector.git</connection>
+    </scm>
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+
         <generex.version>1.0.2</generex.version>
         <reactor.core.version>3.1.8.RELEASE</reactor.core.version>
         <reactor.test.version>3.0.7.RELEASE</reactor.test.version>
@@ -21,6 +42,14 @@
         <lang3.version>3.8.1</lang3.version>
         <source.plugin.version>3.1.0</source.plugin.version>
         <javadoc.plugin.version>3.1.1</javadoc.plugin.version>
+
+        <lombok.version>1.18.2</lombok.version>
+        <logback.version>1.2.3</logback.version>
+        <assertj.version>3.10.0</assertj.version>
+        <maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
+        <maven.surefire.version>2.22.0</maven.surefire.version>
+        <log4j.over.slf4j.version>1.7.25</log4j.over.slf4j.version>
+        <junit.jupiter.version>5.5.0</junit.jupiter.version>
     </properties>
 
     <dependencies>
@@ -74,6 +103,36 @@
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -149,6 +208,20 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.plugin.version}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven.surefire.version}</version>
             </plugin>
         </plugins>
     </build>

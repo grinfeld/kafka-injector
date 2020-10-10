@@ -7,7 +7,7 @@
     <groupId>com.mikerusoft</groupId>
     <artifactId>kafka-injector</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
     <modules>
         <module>kafka-injector-core</module>
         <module>examples</module>
@@ -15,7 +15,6 @@
 
     <name>Kafka Injector</name>
     <description>Tool to inject (simulate) telemetries into Kafka</description>
-
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
