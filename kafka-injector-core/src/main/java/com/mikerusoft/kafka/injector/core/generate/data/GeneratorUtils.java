@@ -14,7 +14,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public class GeneratorUtils {
+class GeneratorUtils {
 
     private GeneratorUtils() {}
 
@@ -159,7 +159,7 @@ public class GeneratorUtils {
         }
     }
 
-    public static void assertValidFloatingType(Class<?> type) {
+    static void assertValidFloatingType(Class<?> type) {
         assertClass(type);
         assertClassIsNumber(type);
         if (!GeneratorUtils.isFloatingNumberType((Class<Number>)type)) {

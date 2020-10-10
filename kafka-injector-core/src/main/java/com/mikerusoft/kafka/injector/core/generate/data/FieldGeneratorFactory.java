@@ -13,6 +13,9 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Factory to return
+ */
 @Slf4j
 public class FieldGeneratorFactory {
 
@@ -28,7 +31,6 @@ public class FieldGeneratorFactory {
                     () -> new SequentialRangeGenerator<>(field.getValue(), castTo)
                 );
                 break;
-
             case TIMESTAMP_REGEX:
                 fieldGenerator = getOrInitValueGenerator(generateStringKey(RegexTimestampGenerator.class, field.getValue(), field.getUid()), () -> new RegexTimestampGenerator(field.getValue()));
                 break;
@@ -42,7 +44,7 @@ public class FieldGeneratorFactory {
                 );
                 break;
             case NIL:
-                fieldGenerator = getOrInitValueGenerator(generateStringKey(TimestampGenerator.class), NullValueGenerator::new);
+                fieldGenerator = getOrInitValueGenerator(generateStringKey(NullValueGenerator.class), NullValueGenerator::new); // only in one cache for all generators
                 break;
             case REGEX:
                 fieldGenerator = getOrInitValueGenerator(
@@ -96,6 +98,9 @@ public class FieldGeneratorFactory {
                     generateStringKey(NestedObjectGenerator.class, List.class.getName() + field.getCast().getName(), String.valueOf(field.getValue()) + Objects.hash(field.getNestedFields()), field.getUid()),
                     () -> new NestedObjectGenerator<>(field.getNestedFields(), field.getCast())
                 );
+                break;
+            case UUID:
+                fieldGenerator = getOrInitValueGenerator(generateStringKey(UUIDGenerator.class), UUIDGenerator::new);  // only one in cache for all generators
                 break;
             default:
                 throw new RuntimeException("Unknown Type");

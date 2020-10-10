@@ -7,6 +7,10 @@ import com.mikerusoft.kafka.injector.core.utils.Utils;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
+/**
+ * Basic class for complicated/hierarchical Generators, such as List and Object.
+ * @param <T>
+ */
 public abstract class NestedGenerator<T> implements ValueGenerator<T> {
     private Field[] fields;
     private Class<T> type;

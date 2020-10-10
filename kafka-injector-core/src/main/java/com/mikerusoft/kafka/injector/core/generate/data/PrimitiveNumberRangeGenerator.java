@@ -2,6 +2,9 @@ package com.mikerusoft.kafka.injector.core.generate.data;
 
 import java.util.Random;
 
+/**
+ * Generates random number bounded by given start and end boundaries, received as string delimited by comma: "5,10"
+ */
 public abstract class PrimitiveNumberRangeGenerator extends RangeGenerator<Number> {
 
     public static PrimitiveNumberRangeGenerator factory(Class<?> type, String values) {

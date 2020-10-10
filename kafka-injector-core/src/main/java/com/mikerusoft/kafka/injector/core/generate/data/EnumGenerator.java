@@ -5,13 +5,23 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Class to generate Enums
+ * @param <T> enum
+ */
 public class EnumGenerator<T> extends RandomValueFromValueFromList<T> {
 
     private T value;
 
+    /**
+     *
+     * @param type class of enum
+     * @param value if not null, this value will be returned for every {@link EnumGenerator#generate()}, else random value from Enum.values() will be returned every time
+     * @throws IllegalArgumentException if type is not enum constant
+     */
     public EnumGenerator(Class<T> type, String value) {
         super(type, createEnums(type));
-        this.value = (T)Enum.valueOf((Class<? extends Enum>)type, value);
+        this.value = value == null ? null : (T)Enum.valueOf((Class<? extends Enum>)type, value);
     }
 
     private static <T> List<T> createEnums(Class<T> type) {

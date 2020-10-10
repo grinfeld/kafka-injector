@@ -1,5 +1,11 @@
 package com.mikerusoft.kafka.injector.core.generate.data;
 
+/**
+ * Always generates the same value
+ * @param <T> what type it should be casted to.
+ *           Since, not always it's possible explicit from value to decide what class to return.
+ * @param <K> value to return
+ */
 public class FixedValueGenerator<T, K> implements ValueGenerator<T> {
     private K value;
     private Class<T> castTo;

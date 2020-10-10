@@ -1,5 +1,8 @@
 package com.mikerusoft.kafka.injector.core.generate.data;
 
+/**
+ * @see PrimitiveNumberRangeGenerator
+ */
 public class PrimitiveIntNumberRangeGenerator extends PrimitiveNumberRangeGenerator {
 
     public PrimitiveIntNumberRangeGenerator(Class<?> type, String values) {

@@ -2,6 +2,8 @@ package com.mikerusoft.kafka.injector.core.generate.data;
 
 import com.mikerusoft.kafka.injector.core.properties.Field;
 import com.mikerusoft.kafka.injector.core.properties.GeneratorType;
+import com.mikerusoft.kafka.injector.core.streaming.TestEnum;
+import com.mikerusoft.kafka.injector.core.streaming.TestObject;
 import com.mikerusoft.kafka.injector.core.utils.Pair;
 import lombok.Data;
 import org.junit.jupiter.api.Nested;
@@ -15,6 +17,7 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
 import static com.mikerusoft.kafka.injector.core.generate.data.FieldGeneratorFactoryTest.Assertions.*;
+import static com.mikerusoft.kafka.injector.core.streaming.TestEnum.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,6 +31,30 @@ class FieldGeneratorFactoryTest {
     @Data
     static class AnotherValue {
         private Value anotherValue;
+    }
+
+    @Nested
+    class EnumGeneratorTest {
+
+        @Test
+        void whenGettingCastAndName_expectedGeneratedEnum() {
+            Object result = FieldGeneratorFactory.generateFieldValue(
+                Field.builder().type(GeneratorType.ENUM).name("something").cast(TestEnum.class).build()
+            );
+            assertThat(result).isNotNull().isInstanceOf(TestEnum.class).isIn(FIRST, SECOND);
+        }
+
+        @Test
+        void whenValueIsNull_expectedOneOfEnumsReturned() {
+            EnumGenerator<TestEnum> uuidg = new EnumGenerator<>(TestEnum.class, null);
+            IntStream.range(0, 7).mapToObj(i -> uuidg.generate()).forEach(v -> assertThat(v).isNotNull().isIn(FIRST, SECOND));
+        }
+
+        @Test
+        void whenValueIsNameFirst_expectedNameFirstAlwaysReturned() {
+            EnumGenerator<TestEnum> uuidg = new EnumGenerator<>(TestEnum.class, FIRST.name());
+            IntStream.range(0, 7).mapToObj(i -> uuidg.generate()).forEach(v -> assertThat(v).isNotNull().isEqualTo(FIRST));
+        }
     }
 
     @Nested
@@ -308,9 +335,43 @@ class FieldGeneratorFactoryTest {
     class NullGeneratorTest {
 
         @Test
+        void when2NullGenerators_expectedTheOnlyOneInstanceExists() {
+            ValueGenerator<?> nullGenerator1 = FieldGeneratorFactory.valueGenerator(
+                Field.builder().type(GeneratorType.NIL).name("something").value("value").cast(TestEnum.class).build()
+            );
+            assertThat(nullGenerator1).isNotNull().isInstanceOf(NullValueGenerator.class);
+            ValueGenerator<?> nullGenerator2 = FieldGeneratorFactory.valueGenerator(
+                Field.builder().type(GeneratorType.NIL).name("other").value("next").cast(TestObject.class).build()
+            );
+            assertThat(nullGenerator2).isNotNull().isInstanceOf(NullValueGenerator.class).isSameAs(nullGenerator1);
+        }
+
+        @Test
         void whenNullValueGenerator_expectedAlwaysReturnsNull() {
             NullValueGenerator nvg = new NullValueGenerator();
             IntStream.range(0, 7).mapToObj(i -> nvg.generate()).forEach(v -> assertThat(v).isNull());
+        }
+    }
+
+    @Nested
+    class UUIDGeneratorTest {
+
+        @Test
+        void when2UUIDGenerators_expectedTheOnlyOneInstanceExists() {
+            ValueGenerator<?> uuidGenerator1 = FieldGeneratorFactory.valueGenerator(
+                    Field.builder().type(GeneratorType.UUID).name("something").value("value").cast(TestEnum.class).build()
+            );
+            assertThat(uuidGenerator1).isNotNull().isInstanceOf(UUIDGenerator.class);
+            ValueGenerator<?> uuidGenerator2 = FieldGeneratorFactory.valueGenerator(
+                    Field.builder().type(GeneratorType.UUID).name("other").value("next").cast(TestObject.class).build()
+            );
+            assertThat(uuidGenerator2).isNotNull().isInstanceOf(UUIDGenerator.class).isSameAs(uuidGenerator1);
+        }
+
+        @Test
+        void whenUUIDlValueGenerator_expectedUUIDReturned() {
+            UUIDGenerator uuidg = new UUIDGenerator();
+            IntStream.range(0, 7).mapToObj(i -> uuidg.generate()).forEach(v -> assertThat(v).isNotNull().isNotEmpty().isInstanceOf(String.class));
         }
     }
 
