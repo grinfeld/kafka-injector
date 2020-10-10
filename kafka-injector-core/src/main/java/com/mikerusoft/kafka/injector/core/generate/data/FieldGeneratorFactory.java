@@ -75,6 +75,12 @@ public class FieldGeneratorFactory {
                     () -> new ValueFromListGenerator<>(castTo, field.getValue())
                 );
                 break;
+            case MAP:
+                fieldGenerator = getOrInitValueGenerator(
+                    generateStringKey(MapGenerator.class, field.getCast().getName(), field.getUid()),
+                    () -> new MapGenerator(field.getNestedFields(), castTo)
+                );
+                break;
             case ENUM:
                 fieldGenerator = getOrInitValueGenerator(
                     generateStringKey(EnumGenerator.class, field.getCast().getName(), field.getValue(), field.getUid()),

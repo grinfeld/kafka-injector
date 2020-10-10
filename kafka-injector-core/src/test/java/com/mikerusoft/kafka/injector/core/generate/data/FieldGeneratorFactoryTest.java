@@ -12,7 +12,7 @@ import org.opentest4j.AssertionFailedError;
 
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeParseException;
-import java.util.List;
+import java.util.*;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
@@ -332,7 +332,7 @@ class FieldGeneratorFactoryTest {
     }
 
     @Nested
-    class NullGeneratorTest {
+    class NullGeneratorTests {
 
         @Test
         void when2NullGenerators_expectedTheOnlyOneInstanceExists() {
@@ -354,7 +354,7 @@ class FieldGeneratorFactoryTest {
     }
 
     @Nested
-    class UUIDGeneratorTest {
+    class UUIDGeneratorTests {
 
         @Test
         void when2UUIDGenerators_expectedTheOnlyOneInstanceExists() {
@@ -598,7 +598,7 @@ class FieldGeneratorFactoryTest {
 
         @Test
         void whenInvalidDateFormat_expectedDateTimeParseException() {
-            org.junit.jupiter.api.Assertions.assertThrows(
+            assertThrows(
                 DateTimeParseException.class,
                 () -> new TimestampGenerator("blabla").generate()
             );
@@ -606,7 +606,7 @@ class FieldGeneratorFactoryTest {
 
         @Test
         void withValidDateFormat_whenFormatIsNotSupportedByApp_expectedDateTimeParseException() {
-            org.junit.jupiter.api.Assertions.assertThrows(
+            assertThrows(
                     DateTimeParseException.class,
                     () -> new TimestampGenerator("2018-07-11 12:30").generate()
             );
@@ -625,7 +625,7 @@ class FieldGeneratorFactoryTest {
 
         @Test
         void whenValueIsNull_expectedIllegalArgumentException() {
-            org.junit.jupiter.api.Assertions.assertThrows(
+            assertThrows(
                 IllegalArgumentException.class,
                 () -> new RegexTimestampGenerator(null)
             );
@@ -633,7 +633,7 @@ class FieldGeneratorFactoryTest {
 
         @Test
         void whenValueIsEmpty_expectedIllegalArgumentException() {
-            org.junit.jupiter.api.Assertions.assertThrows(
+            assertThrows(
                 IllegalArgumentException.class,
                 () -> new RegexTimestampGenerator("")
             );
@@ -641,7 +641,7 @@ class FieldGeneratorFactoryTest {
 
         @Test
         void whenNonRegexTextInvalidDateFormat_expectedDateTimeParseException() {
-            org.junit.jupiter.api.Assertions.assertThrows(
+            assertThrows(
                 DateTimeParseException.class,
                 () -> new RegexTimestampGenerator("blabla").generate()
             );
@@ -649,7 +649,7 @@ class FieldGeneratorFactoryTest {
 
         @Test
         void withValidDateFormat_whenFormatIsNotSupportedByApp_expectedDateTimeParseException() {
-            org.junit.jupiter.api.Assertions.assertThrows(
+            assertThrows(
                 DateTimeParseException.class,
                 () -> new RegexTimestampGenerator("2018\\-07\\-11 12\\:30").generate()
             );
@@ -672,6 +672,28 @@ class FieldGeneratorFactoryTest {
             long expected = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse("2018-07-11 12:30:45.123").getTime();
             long generated = new RegexTimestampGenerator("2018\\-07\\-11 12\\:30\\:45\\.123").generate();
             assertEquals(expected, generated);
+        }
+    }
+
+    @Nested
+    class MapGeneratorTests {
+
+        @Test
+        void whenCreatingMapWith2valuesStringAndInteger_expectedGeneratedMapWithStringAndInteger() {
+            Object result = FieldGeneratorFactory.generateFieldValue(
+                Field.builder()
+                    .type(GeneratorType.MAP).cast(HashMap.class).name("myname")
+                    .nestedFields(new Field[]{
+                        Field.builder().type(GeneratorType.FIXED).name("key1").value("string").cast(String.class).build(),
+                        Field.builder().type(GeneratorType.FIXED).name("key2").value("100").cast(Integer.class).build()
+                    })
+                .build()
+            );
+
+            assertThat(result).isNotNull().isExactlyInstanceOf(HashMap.class);
+            @SuppressWarnings("unchecked")
+            Map<Object, Object> resultMap = (Map<Object, Object>)result;
+            assertThat(resultMap).containsOnlyKeys("key1", "key2").containsValues("string", 100);
         }
     }
 

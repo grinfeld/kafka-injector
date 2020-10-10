@@ -44,9 +44,8 @@ public abstract class NestedGenerator<T> implements ValueGenerator<T> {
             }
             return t;
         } catch (Exception e) {
-            Utils.rethrowRuntimeException(e);
+            return Utils.rethrowRuntimeException(e);
         }
-        return null;
     }
 
     private void populateData(T t, Field f) {

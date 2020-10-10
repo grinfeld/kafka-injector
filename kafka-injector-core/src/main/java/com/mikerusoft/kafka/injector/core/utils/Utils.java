@@ -18,7 +18,7 @@ public class Utils {
     private static final BigInteger BI_NANOS_PER_HOUR = BigInteger.valueOf(60L * 60L * 1000000000L);
     private static final BigInteger BI_NANOS_PER_DAY = BigInteger.valueOf(24L * 60L * 60L * 1000000000L);
 
-    public static void rethrowRuntimeException(Exception e) throws RuntimeException {
+    public static <T> T rethrowRuntimeException(Exception e) throws RuntimeException {
         if (e instanceof RuntimeException)
             throw (RuntimeException)e;
         throw new RuntimeException(e);

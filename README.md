@@ -29,7 +29,7 @@ Example:
 
 ## Here Example of configuration file
 
-```$yml
+```yaml
 kafka:
   url: "localhost:19092"
   batchSize: 250000
@@ -161,6 +161,7 @@ Main element is **kafka**. It has few (many) nested elements, as follows:
                 1. **NESTED_OBJECT** - generates Object according to nested configuration. **cast** should be object's full class name to be generated. Subfields should be defined under **nestedFields** element and it shouldn't be empty.
                 1. **NESTED_LIST** - generates List (of values of objects) according to nested configuration. **cast** - should be ``java.util.List`` (currently, the only valid value). Subfields should be defined under **nestedFields** element and it shouldn't be empty.
                 1. **ENUM** - pick random value from one of Enums or fixed value. **cast** - should be enum class. If **value** i set - always returns the same value, else returns random enum value from this enum
+                1. **MAP** - creates Map with values defined in **nested_fields**. names of **nested_value** will be the keys in Map. **cast** should be class implements *java.util.Map**. Ignores ***value** element of field.
             1. **cast** - fully qualified class name to cast/convert value to. The value should be primitive boxing classes (``java.lang.Long.class`` and etc) or primitive (``java.lang.Long.TYPE``) or ``java.lang.String``. 
             1. **value** - value to use for generation. (String) _required_ depends on **type** value (see list above).
             1. **nested_fields** - in case of complex objects, it should be populated according to **type** value. Currently only **NESTED_OBJECT** and **NESTED_LIST** supported.
@@ -171,10 +172,58 @@ Main element is **kafka**. It has few (many) nested elements, as follows:
 
 ## Custom Generator
 
+When you need to define only rules how to generate fields, you can use only MapGenerator, ListGenerator and other simple generators
+
+For example:
+
+```yaml
+kafka:
+  url: "localhost:9092"
+  batchSize: 250000
+  lingerMs: 5
+  topics:
+  - name: "IN-RAW"
+    client_id_config: "sometext"
+    serializer:
+      key: "org.apache.kafka.common.serialization.StringSerializer"
+      value: "com.mikerusoft.kafka.injector.core.kafka.JsonSerializer"
+    keyGenerator:
+      type: "com.mikerusoft.kafka.injector.core.generate.model.SingleRootGenerator"
+      fields:
+      - name: "does_not_matter"
+        type: "fixed"
+        cast: "java.lang.Integer"
+        value: "110"
+    valueGenerators:
+    - type: "com.mikerusoft.kafka.injector.core.generate.model.SingleRootGenerator"
+      fields:
+        - name: "root"
+          type: "map"
+          cast: "java.util.HashMap"
+            nestedFields:
+              - name: "key1"
+                type: "regex"
+                cast: "java.lang.String"
+                value: "[0-9][0-9]{7,7}"
+              - name: "key2"
+                type: "fixed"
+                cast: "java.lang.String"
+                value: "SOME_VALUE"
+          
+```
+
+This one, finally, will send to Kafka json of 
+```json
+{
+  "key1": "some generated value",
+  "key2": "Some Text"
+}
+```
+
 If you have POJOs with regular set and get methods for fields and empty constructor, you have everything to generate data and put it in Kafka.
 
 But if for some reasons, one of classes doesn't have set and get methods for fields or any other restriction, you can implement your own generator by extending
 [SpecificDataGenerator<T, B>](kafka-injector-core/src/main/java/com/mikerusoft/kafka/injector/core/generate/model/SpecificDataGenerator.java)
-where ``T`` is your object to send to Kafka and ``B`` is a builder to use instead of ``T``.
+where ``T`` is your object to send to Kafka and ``B`` is a builder to use instead of ``T`` during generation process.
 
 See [example](examples/src/main/java/com/mikerusoft/kafka/injector/examples/model/ExampleMessageGenerator.java)

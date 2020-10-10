@@ -4,7 +4,7 @@ import java.util.Optional;
 
 public enum GeneratorType {
     REGEX, NIL, RANDOM, EMPTY, FIXED, RANGE, SEQUENTIAL_RANGE, LIST, RANDOM_LIST, TIMESTAMP, TIMESTAMP_REGEX,
-    NESTED_LIST, NESTED_OBJECT, ENUM, UUID;
+    NESTED_LIST, NESTED_OBJECT, ENUM, UUID, MAP;
     private static final String EMPTY_STRING = "";
     public static GeneratorType byString(String value) {
         try {
