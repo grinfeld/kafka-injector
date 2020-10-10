@@ -13,6 +13,8 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
@@ -39,8 +41,10 @@ public class StreamData {
         return stream;
     }
 
-    public static <K, V> Disposable subscribe(List<Topic> topics, BiConsumer<String, List<Pair<K,V>>> consumer, Duration runningWindow) {
-        return createStream(topics, consumer, runningWindow).subscribe();
+    public static <K, V> Future<?> subscribe(List<Topic> topics, BiConsumer<String, List<Pair<K,V>>> consumer, Duration runningWindow) {
+        FutureTask<Boolean> finish = new FutureTask<>(() -> true);
+        createStream(topics, consumer, runningWindow).doOnComplete(finish).subscribe();
+        return finish;
     }
 
     private static <K, V> Flux<Pair<String, List<Pair<K, V>>>> createTopicGeneratorStreams(Topic topic) {

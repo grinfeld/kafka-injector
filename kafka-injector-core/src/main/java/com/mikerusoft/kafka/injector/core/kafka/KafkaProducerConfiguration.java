@@ -125,4 +125,14 @@ public class KafkaProducerConfiguration {
         }
     }
 
+    public static void closeAll() {
+        instance.producers.values().forEach(p -> {
+            try {
+                p.close();
+            } catch (Exception e) {
+                log.warn("Failed to close producer {}", e.getMessage());
+            }
+        });
+    }
+
 }

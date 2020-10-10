@@ -7,7 +7,7 @@
 
     <groupId>com.mikerusoft</groupId>
     <artifactId>kafka-injector-core</artifactId>
-    <version>1.0.7</version>
+    <version>1.0.8</version>
     <name>Kafka Injector Core</name>
     <description>Library to generate random data and to put it in Kafka for test purposes</description>
     <developers>
