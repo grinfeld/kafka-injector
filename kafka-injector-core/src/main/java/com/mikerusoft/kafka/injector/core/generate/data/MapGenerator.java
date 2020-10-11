@@ -25,19 +25,24 @@ public class MapGenerator implements ValueGenerator<Map> {
 
     @Override
     public Map generate() {
-        try {
-            Map map = type.newInstance();
-            for (Field f : fields) {
-                map.put(f.getName(), FieldGeneratorFactory.generateFieldValue(f));
-            }
-            return map;
-        } catch (Exception e) {
-            return Utils.rethrowRuntimeException(e);
+        Map map = createContainerInstance();
+        for (Field f : fields) {
+            map.put(f.getName(), FieldGeneratorFactory.generateFieldValue(f));
         }
+        return map;
     }
 
     @Override
     public Class<Map> getCastTo() {
         return type;
+    }
+
+    @Override
+    public Map createContainerInstance() {
+        try {
+            return type.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            return Utils.rethrowRuntimeException(e);
+        }
     }
 }

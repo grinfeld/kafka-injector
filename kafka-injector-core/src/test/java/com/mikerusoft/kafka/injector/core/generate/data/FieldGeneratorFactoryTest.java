@@ -1,11 +1,15 @@
 package com.mikerusoft.kafka.injector.core.generate.data;
 
 import com.mikerusoft.kafka.injector.core.properties.Field;
+import com.mikerusoft.kafka.injector.core.properties.FieldContainerCreator;
 import com.mikerusoft.kafka.injector.core.properties.GeneratorType;
 import com.mikerusoft.kafka.injector.core.streaming.TestEnum;
 import com.mikerusoft.kafka.injector.core.streaming.TestObject;
 import com.mikerusoft.kafka.injector.core.utils.Pair;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
@@ -24,6 +28,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class FieldGeneratorFactoryTest {
 
     @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder(toBuilder = true, builderClassName = "Builder")
     static class Value {
         private String value;
     }
@@ -63,33 +70,33 @@ class FieldGeneratorFactoryTest {
         @Test
         void withNestedObjectInsideNestedList_withoutNestedFieldsInObject_expectedRuntimeException() {
             org.junit.jupiter.api.Assertions.assertThrows(
-                RuntimeException.class,
-                () ->
-                    FieldGeneratorFactory.generateFieldValue(
-                        Field.builder().type(GeneratorType.NESTED_LIST).cast(Value.class).nestedFields(new Field[] {
-                            Field.builder().type(GeneratorType.NESTED_OBJECT).cast(Value.class).build()
-                        }).build()
-                    )
+                    RuntimeException.class,
+                    () ->
+                            FieldGeneratorFactory.generateFieldValue(
+                                    Field.builder().type(GeneratorType.NESTED_LIST).cast(Value.class).nestedFields(new Field[]{
+                                            Field.builder().type(GeneratorType.NESTED_OBJECT).cast(Value.class).build()
+                                    }).build()
+                            )
             );
         }
 
         @Test
         void withNestedObject_whenNestedFieldsEmpty_expectedRuntimeException() {
             org.junit.jupiter.api.Assertions.assertThrows(
-                RuntimeException.class,
-                () ->
-                    FieldGeneratorFactory.generateFieldValue(Field.builder().type(GeneratorType.NESTED_OBJECT)
-                            .cast(Value.class).build())
+                    RuntimeException.class,
+                    () ->
+                            FieldGeneratorFactory.generateFieldValue(Field.builder().type(GeneratorType.NESTED_OBJECT)
+                                    .cast(Value.class).build())
             );
         }
 
         @Test
         void withNestedList_whenNestedFieldsEmpty_expectedRuntimeException() {
             org.junit.jupiter.api.Assertions.assertThrows(
-                RuntimeException.class,
-                () ->
-                    FieldGeneratorFactory.generateFieldValue(Field.builder().type(GeneratorType.NESTED_LIST)
-                            .cast(Value.class).build())
+                    RuntimeException.class,
+                    () ->
+                            FieldGeneratorFactory.generateFieldValue(Field.builder().type(GeneratorType.NESTED_LIST)
+                                    .cast(Value.class).build())
             );
         }
 
@@ -109,7 +116,7 @@ class FieldGeneratorFactoryTest {
                     cast: java.lang.String
                     value: "Hello
             */
-            Field field = Field.builder().type(GeneratorType.NESTED_LIST).cast(Value.class).nestedFields(new Field[] {
+            Field field = Field.builder().type(GeneratorType.NESTED_LIST).cast(Value.class).nestedFields(new Field[]{
                     Field.builder().type(GeneratorType.NESTED_OBJECT).cast(Value.class).nestedFields(new Field[]{
                             Field.builder().name("setValue").cast(String.class).type(GeneratorType.FIXED).value("Hello").build()
                     }).build()
@@ -135,8 +142,8 @@ class FieldGeneratorFactoryTest {
                 cast: "String"
                 value: "Hello"
             */
-            Field field = Field.builder().cast(String.class).type(GeneratorType.NESTED_LIST).nestedFields(new Field[] {
-                Field.builder().cast(String.class).type(GeneratorType.FIXED).value("Hello").build()
+            Field field = Field.builder().cast(String.class).type(GeneratorType.NESTED_LIST).nestedFields(new Field[]{
+                    Field.builder().cast(String.class).type(GeneratorType.FIXED).value("Hello").build()
             }).build();
             Object o = FieldGeneratorFactory.generateFieldValue(field);
             assertThat(o).isNotNull().isInstanceOf(List.class);
@@ -162,16 +169,32 @@ class FieldGeneratorFactoryTest {
                     cast: java.lang.String
                     value: "Hello
             */
-            Field field = Field.builder().cast(AnotherValue.class).type(GeneratorType.NESTED_OBJECT).nestedFields(new Field[] {
-                Field.builder().name("setAnotherValue").type(GeneratorType.NESTED_OBJECT).cast(Value.class).nestedFields(new Field[]{
-                    Field.builder().name("setValue").cast(String.class).type(GeneratorType.FIXED).value("Hello").build()
-                }).build()
+            Field field = Field.builder().cast(AnotherValue.class).type(GeneratorType.NESTED_OBJECT).nestedFields(new Field[]{
+                    Field.builder().name("setAnotherValue").type(GeneratorType.NESTED_OBJECT).cast(Value.class).nestedFields(new Field[]{
+                            Field.builder().name("setValue").cast(String.class).type(GeneratorType.FIXED).value("Hello").build()
+                    }).build()
             }).build();
             Object o = FieldGeneratorFactory.generateFieldValue(field);
             assertThat(o).isNotNull().isInstanceOf(AnotherValue.class);
-            Value value = ((AnotherValue)o).getAnotherValue();
+            Value value = ((AnotherValue) o).getAnotherValue();
             assertThat(value).isNotNull();
             assertThat(value.getValue()).isNotEmpty().isEqualTo("Hello");
+        }
+
+        @Test
+        void whenUsingFireldContainerCreator_expectedCreatedInstanceFromFieldContainerCreatorData() {
+            Field field =
+                    Field.builder().name("setAnotherValue").type(GeneratorType.NESTED_OBJECT).cast(Value.Builder.class)
+                            .fieldContainerCreator(FieldContainerCreator.builder()
+                                    .aStatic(true)
+                                    .methodName("builder")
+                                    .className(Value.class.getName())
+                                    .build()
+                            ).nestedFields(new Field[]{
+                            Field.builder().name("setValue").cast(String.class).type(GeneratorType.FIXED).value("Hello").build()
+                    }).build();
+            ValueGenerator<?> valueGenerator = FieldGeneratorFactory.valueGenerator(field);
+            assertThat(valueGenerator.createContainerInstance()).isNotNull().isInstanceOf(Value.Builder.class);
         }
     }
 

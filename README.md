@@ -164,7 +164,11 @@ Main element is **kafka**. It has few (many) nested elements, as follows:
                 1. **MAP** - creates Map with values defined in **nested_fields**. names of **nested_value** will be the keys in Map. **cast** should be class implements *java.util.Map**. Ignores ***value** element of field.
             1. **cast** - fully qualified class name to cast/convert value to. The value should be primitive boxing classes (``java.lang.Long.class`` and etc) or primitive (``java.lang.Long.TYPE``) or ``java.lang.String``. 
             1. **value** - value to use for generation. (String) _required_ depends on **type** value (see list above).
-            1. **nested_fields** - in case of complex objects, it should be populated according to **type** value. Currently only **NESTED_OBJECT** and **NESTED_LIST** supported.
+            1. **nested-fields** (**nested_fields**) - in case of complex objects, it should be populated according to **type** value. Currently only **NESTED_OBJECT** and **NESTED_LIST** supported.
+            1. **creator** - defines the custom method (and class) to create a container for **NESTED_OBJECT** only. _Optional_
+                1. **class-name** - the class name where creator/builder method is placed in. It could be (and usual is) different from **cast** value. _required_
+                1. **method-name** - the method name to create the desired **cast** object/container. Method could be either static or not. _Optional_. (**default**: empty constructor of **class-name**. If there is no **method-name**, means the **class-name** should have empty constructor)
+                1. **static** - defines if **method-name** is static in **class-name** or not
         1. **instances** - duplicates this generator specified times (In case we want the same configuration for more than 1 generator. It could be for concurrency reasons). (Number). _Optional_, (**default 1**). 
         1. **delayAfter** - the first element for flow control. If set, defines delay before starting to emit the 1st element (doesn't affect emitting other element, except the first one). (Number) milli seconds. _Optional_, (**default 0**).
         1. **interval** - the interval manage flow control. It defines interval for generating elements. For example, when putting 1 (ms) - means that it will generate value every 1 milli second, i.e. generates value, wait 1 milli second, then generates the second value and so on.  (Number) milli seconds. _Optional_, (**default 0**).

@@ -18,23 +18,28 @@ public class Field {
     @JsonIgnore private Class<?> cast;
     private String value;
     @JsonIgnore
+    @Builder.Default
     private String uid = UUID.randomUUID().toString();
     private Field[] nestedFields;
+    @JsonProperty("creator")
+    private FieldContainerCreator fieldContainerCreator;
 
-    public Field(String name, GeneratorType type, Class<?> cast, String value, String uid, Field[] nestedFields) {
+    public Field(String name, GeneratorType type, Class<?> cast, String value, String uid, Field[] nestedFields, FieldContainerCreator fieldContainerCreator) {
         this.name = name;
         this.type = type;
         this.cast = cast;
         this.value = value;
         this.nestedFields = nestedFields;
+        this.fieldContainerCreator = fieldContainerCreator;
         this.setUid(uid);
     }
 
-    public Field(String name, GeneratorType type, Class<?> cast, String value, String uid) {
+    public Field(String name, GeneratorType type, Class<?> cast, String value, String uid, FieldContainerCreator fieldContainerCreator) {
         this.name = name;
         this.type = type;
         this.cast = cast;
         this.value = value;
+        this.fieldContainerCreator = fieldContainerCreator;
         this.setUid(uid);
     }
 
@@ -62,7 +67,12 @@ public class Field {
         try {
             this.cast = Class.forName(cast);
         } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException(e.getMessage(), e);
+            throw new IllegalArgumentException("Failed to find class " + cast, e);
         }
+    }
+
+    @JsonProperty("nested-fields")
+    public void setNestedFieldsNonDashed(Field[] nestedFields) {
+        this.nestedFields = nestedFields;
     }
 }

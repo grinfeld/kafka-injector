@@ -10,7 +10,7 @@ public class NestedListGenerator<V> extends NestedGenerator<ArrayList> {
     private Class<V> innerClass;
 
     public NestedListGenerator(Field[] fields, Class<V> type) {
-        super(fields, ArrayList.class);
+        super(fields, ArrayList.class, null);
         innerClass = type;
     }
 

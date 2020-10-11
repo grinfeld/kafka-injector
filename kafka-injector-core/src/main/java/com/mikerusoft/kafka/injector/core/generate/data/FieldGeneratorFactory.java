@@ -101,8 +101,8 @@ public class FieldGeneratorFactory {
                 break;
             case NESTED_OBJECT:
                 fieldGenerator = getOrInitValueGenerator(
-                    generateStringKey(NestedObjectGenerator.class, List.class.getName() + field.getCast().getName(), String.valueOf(field.getValue()) + Objects.hash(field.getNestedFields()), field.getUid()),
-                    () -> new NestedObjectGenerator<>(field.getNestedFields(), field.getCast())
+                    generateStringKey(NestedObjectGenerator.class, List.class.getName() + field.getCast().getName(), String.valueOf(field.getFieldContainerCreator()), String.valueOf(field.getValue()) + Objects.hash(field.getNestedFields()), field.getUid()),
+                    () -> new NestedObjectGenerator<>(field.getNestedFields(), field.getCast(), field)
                 );
                 break;
             case UUID:

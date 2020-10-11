@@ -117,6 +117,18 @@ public class Reflections {
         return method;
     }
 
+    public static Method findCreateMethod(Class<?> type, String name) {
+        Method method = methodCache.get(type.getName() + "_" + name);
+        if (method == null) {
+            method = findMethod(type, name);
+            if (method == null) {
+                throw new NullPointerException("Failed to find method " + name);
+            }
+            methodCache.put(type.getName() + "_" + name, method);
+        }
+        return method;
+    }
+
     private static List<Method> findCandidates(Class<?> type, String name, Class<?> param) {
         return Stream.of(type.getDeclaredMethods())
                 .filter(m -> Objects.equals(m.getName(), name))
