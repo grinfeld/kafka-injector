@@ -68,36 +68,27 @@ class FieldGeneratorFactoryTest {
     class NestedGeneratorTest {
 
         @Test
-        void withNestedObjectInsideNestedList_withoutNestedFieldsInObject_expectedRuntimeException() {
-            org.junit.jupiter.api.Assertions.assertThrows(
-                    RuntimeException.class,
-                    () ->
-                            FieldGeneratorFactory.generateFieldValue(
-                                    Field.builder().type(GeneratorType.NESTED_LIST).cast(Value.class).nestedFields(new Field[]{
-                                            Field.builder().type(GeneratorType.NESTED_OBJECT).cast(Value.class).build()
-                                    }).build()
-                            )
+        void withNestedObjectInsideNestedList_withoutNestedFieldsInObject_expectedCreatedListWithObjectCreatedByEmptyConstructor() {
+            Object result = FieldGeneratorFactory.generateFieldValue(
+                    Field.builder().type(GeneratorType.NESTED_LIST).cast(Value.class).nestedFields(new Field[]{
+                            Field.builder().type(GeneratorType.NESTED_OBJECT).cast(Value.class).build()
+                    }).build()
             );
+            assertThat(result).isNotNull().isInstanceOf(ArrayList.class).isEqualTo(Collections.singletonList(new Value()));
         }
 
         @Test
-        void withNestedObject_whenNestedFieldsEmpty_expectedRuntimeException() {
-            org.junit.jupiter.api.Assertions.assertThrows(
-                    RuntimeException.class,
-                    () ->
-                            FieldGeneratorFactory.generateFieldValue(Field.builder().type(GeneratorType.NESTED_OBJECT)
-                                    .cast(Value.class).build())
-            );
+        void withNestedObject_whenNestedFieldsEmpty_expectedObjectCreatedViaEmptyConstructorWithoutPopulatingAnything() {
+            Object result = FieldGeneratorFactory.generateFieldValue(Field.builder().type(GeneratorType.NESTED_OBJECT)
+                    .cast(Value.class).build());
+            assertThat(result).isNotNull().isInstanceOf(Value.class).isEqualTo(new Value());
         }
 
         @Test
-        void withNestedList_whenNestedFieldsEmpty_expectedRuntimeException() {
-            org.junit.jupiter.api.Assertions.assertThrows(
-                    RuntimeException.class,
-                    () ->
-                            FieldGeneratorFactory.generateFieldValue(Field.builder().type(GeneratorType.NESTED_LIST)
-                                    .cast(Value.class).build())
-            );
+        void withNestedList_whenNestedFieldsEmpty_expectedCreatedEmptyList() {
+            Object result = FieldGeneratorFactory.generateFieldValue(Field.builder().type(GeneratorType.NESTED_LIST)
+                    .cast(Value.class).build());
+            assertThat(result).isNotNull().isInstanceOf(ArrayList.class).isEqualTo(new ArrayList<>());
         }
 
         @Test

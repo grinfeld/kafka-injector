@@ -21,9 +21,7 @@ public abstract class NestedGenerator<T> implements ValueGenerator<T> {
     public NestedGenerator(Field[] fields, Class<T> type, FieldContainerCreator containerCreator) {
         this.containerCreator = containerCreator;
         this.type = type;
-        if (fields == null || fields.length == 0)
-            throw new IllegalArgumentException("For nested object fields shouldn't be null or empty");
-        this.fields = fields;
+        this.fields = fields == null ? new Field[0] : fields;
     }
 
     protected Method populateMethod(Field field) throws ReflectiveOperationException {

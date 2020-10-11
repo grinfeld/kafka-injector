@@ -18,9 +18,7 @@ public class MapGenerator implements ValueGenerator<Map> {
             throw new IllegalArgumentException("Class should be child of java,util.Map");
         }
         this.type = (Class<Map>)type;
-        if (fields == null || fields.length == 0)
-            throw new IllegalArgumentException("For nested object fields shouldn't be null or empty");
-        this.fields = fields;
+        this.fields = fields == null ? new Field[0] : fields;
     }
 
     @Override
