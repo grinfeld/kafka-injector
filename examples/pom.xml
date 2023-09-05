@@ -12,7 +12,7 @@
 
     <properties>
         <jackson.version>2.11.3</jackson.version>
-        <kafka.version>2.6.0</kafka.version>
+        <kafka.version>2.6.3</kafka.version>
     </properties>
 
     <artifactId>examples</artifactId>
