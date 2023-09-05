@@ -37,7 +37,7 @@
         <reactor.core.version>3.1.8.RELEASE</reactor.core.version>
         <reactor.test.version>3.0.7.RELEASE</reactor.test.version>
         <jackson.version>2.11.3</jackson.version>
-        <kafka.version>2.6.0</kafka.version>
+        <kafka.version>2.6.3</kafka.version>
         <maven.assembly.plugin.version>3.1.0</maven.assembly.plugin.version>
         <lang3.version>3.8.1</lang3.version>
         <source.plugin.version>3.1.0</source.plugin.version>
